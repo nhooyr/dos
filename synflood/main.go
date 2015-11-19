@@ -10,8 +10,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/nhooyr/gopacket"
-	"github.com/nhooyr/gopacket/layers"
+	"github.com/google/gopacket"
+	"github.com/google/gopacket/layers"
 )
 
 func main() {
@@ -48,12 +48,13 @@ func main() {
 
 func packet(raddr net.IP) []byte {
 	ip := &layers.IPv4{
-		Version:  0x4,
-		TOS:      0x4,
-		TTL:      0x40,
-		Protocol: layers.IPProtocolTCP,
-		SrcIP:    net.ParseIP("0.0.0.1"),
-		DstIP:    raddr,
+		Version:       0x4,
+		TOS:           0x4,
+		TTL:           0x40,
+		Protocol:      layers.IPProtocolTCP,
+		SrcIP:         net.ParseIP("0.0.0.1"),
+		DstIP:         raddr,
+		WithRawINETSocket: true,
 	}
 	rand.Seed(time.Now().UnixNano())
 	tcp := &layers.TCP{

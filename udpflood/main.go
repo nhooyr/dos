@@ -8,8 +8,8 @@ import (
 	"runtime"
 	"syscall"
 
-	"github.com/nhooyr/gopacket"
-	"github.com/nhooyr/gopacket/layers"
+	"github.com/google/gopacket"
+	"github.com/google/gopacket/layers"
 )
 
 func main() {
@@ -52,6 +52,7 @@ func packet(raddr net.IP) []byte {
 		Protocol: layers.IPProtocolUDP,
 		SrcIP:    net.ParseIP("0.0.0.1"),
 		DstIP:    raddr,
+		WithRawINETSocket: true,
 	}
 	udp := &layers.UDP{
 		SrcPort: 0xaa47,
